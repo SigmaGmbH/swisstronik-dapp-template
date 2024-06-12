@@ -155,7 +155,6 @@ function App() {
 
       const [encryptedData] = await encryptDataField(NODE_RPC_URL, data);
 
-      // const gasLimit = await web3.eth.estimateGas(tx);
 
       const signer = provider?.getSigner();
 

@@ -151,8 +151,6 @@ function App() {
 
       const [encryptedData] = await encryptDataField(NODE_RPC_URL, data);
 
-      // const gasLimit = await web3.eth.estimateGas(tx);
-
       const receipt = await web3.eth.sendTransaction(
         {
           from: address,
@@ -163,8 +161,6 @@ function App() {
         web3.eth.defaultReturnFormat,
         {
           checkRevertBeforeSending: false,
-          // ignoreGasPricingX: true,
-          // ignoreFillingGasLimit: true,
         }
       );
 

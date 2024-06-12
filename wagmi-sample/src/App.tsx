@@ -7,7 +7,6 @@ import { useAccount, useConfig } from "wagmi";
 import { decodeAbiParameters, encodeFunctionData } from "viem";
 import ABI from "./ABI.json";
 import { formatAddress, sendShieldedQuery } from "./utils";
-// import { sendTransaction } from "viem/actions";
 import { encryptDataField } from "@swisstronik/utils";
 import { verificationTypes } from "@swisstronik/sdk/compliance/verificationDetails";
 import { signTypedData, sendTransaction } from "@wagmi/core";
