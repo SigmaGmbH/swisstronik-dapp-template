@@ -13,11 +13,12 @@
     "@metamask/eth-sig-util": "^7.0.2",
     "@swisstronik/sdk": "^1.14.0",
     "@swisstronik/utils": "^1.3.0",
+    "@swisstronik/web3-plugin-swisstronik": "^1.4.0",
     "@web3modal/ethers5": "^4.2.3",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "web3": "^4.9.0"
+    "web3": "^4.10.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
