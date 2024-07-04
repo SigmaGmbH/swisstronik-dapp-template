@@ -12,9 +12,9 @@ import {
 } from "@web3modal/ethers5/react";
 import ABI from "./ABI.json";
 import { verificationTypes } from "@swisstronik/sdk/compliance/verificationDetails";
-import { encryptDataField } from "@swisstronik/utils";
-import { formatAddress, sendShieldedQuery } from "./utils";
+import { formatAddress } from "./utils";
 import { Web3 } from "web3";
+import { SwisstronikPlugin } from "@swisstronik/web3-plugin-swisstronik";
 
 const {
   VITE_CONTRACT_ADDRESS: CONTRACT_ADDRESS,
@@ -59,7 +59,13 @@ function App() {
   const [imageUrlFromInput, setImageUrlFromInput] = useState("");
   const [hash, setHash] = useState("");
   const [owner, setOwner] = useState("");
-  const web3 = useMemo(() => new Web3(walletProvider as any), [walletProvider]);
+
+  const web3 = useMemo(() => {
+    const web3 = new Web3(walletProvider as any);
+    web3.registerPlugin(new SwisstronikPlugin(NODE_RPC_URL));
+    return web3;
+  }, [walletProvider]);
+
   const contract = useMemo(
     () => new web3.eth.Contract(ABI, CONTRACT_ADDRESS),
     [web3]
@@ -69,19 +75,10 @@ function App() {
     (async () => {
       if (!contract || !address || !web3) return;
       try {
-        const data = contract.methods.owner().encodeABI();
-        const responseMessage = await sendShieldedQuery(
-          web3,
-          CONTRACT_ADDRESS,
-          data as `0x${string}`
-        );
-        const owner = web3.eth.abi.decodeParameters(
-          (ABI as any).find((x: any) => x.name === "owner")?.outputs,
-          responseMessage
-        )[0];
+        const owner: string = await contract.methods.owner().call();
         console.log("Owner:", owner);
 
-        setOwner(owner as string);
+        setOwner(owner);
       } catch (error) {
         console.log(error);
       }
@@ -149,13 +146,11 @@ function App() {
     try {
       const data = contract.methods.setImageUrl(imageUrlFromInput).encodeABI();
 
-      const [encryptedData] = await encryptDataField(NODE_RPC_URL, data);
-
       const receipt = await web3.eth.sendTransaction(
         {
           from: address,
           to: CONTRACT_ADDRESS,
-          data: encryptedData,
+          data,
           gasLimit: 1_000_000,
         },
         web3.eth.defaultReturnFormat,
@@ -192,20 +187,10 @@ function App() {
         return alert("Invalid adapter type");
       }
 
-      const data = contract.methods
+      const imageUrl: string = await contract.methods
         .getImageUrl(signature, issuerAddress, verifType, adaptType)
-        .encodeABI() as `0x${string}`;
+        .call();
 
-      const responseMessage = await sendShieldedQuery(
-        web3,
-        CONTRACT_ADDRESS,
-        data
-      );
-
-      const imageUrl = web3.eth.abi.decodeParameters(
-        (ABI as any[]).find((x) => x.name === "getImageUrl")?.outputs,
-        responseMessage
-      )[0] as string;
       setImageUrlFromContract(imageUrl);
     } catch (error) {
       console.error(error);
