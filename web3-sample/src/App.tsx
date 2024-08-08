@@ -144,20 +144,9 @@ function App() {
     }
 
     try {
-      const data = contract.methods.setImageUrl(imageUrlFromInput).encodeABI();
-
-      const receipt = await web3.eth.sendTransaction(
-        {
-          from: address,
-          to: CONTRACT_ADDRESS,
-          data,
-          gasLimit: 1_000_000,
-        },
-        web3.eth.defaultReturnFormat,
-        {
-          checkRevertBeforeSending: false,
-        }
-      );
+      const receipt = await contract.methods
+        .setImageUrl(imageUrlFromInput)
+        .send({ from: address });
 
       console.log("Transaction receipt:", receipt);
 
